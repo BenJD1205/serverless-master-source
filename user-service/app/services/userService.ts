@@ -3,18 +3,23 @@ import { autoInjectable } from 'tsyringe';
 import { plainToClass } from 'class-transformer';
 import { SignupDto } from '../models/dto/SignupDto';
 import { LoginDto } from '../models/dto/LoginDto';
-import { VerificationDto } from 'app/models/dto/UpdateDto';
+import { VerificationDto } from '../models/dto/UpdateDto';
 import { AppValidationError } from '../utility/error';
 import { SuccessResponse, ErrorResponse } from '../utility/response';
 import { GenSalt, GetHashedPassword, GetToken, ValidatePassword, VerifyToken } from '../utility/password';
 import { UserRepository } from '../repository/userRepository';
 import { GenerateAccessCode, SendVerificationCode } from '../utility/notification';
+import { TimeDifference } from '../utility/dateHelper';
 
 @autoInjectable()
 export class UserService {
     repository: UserRepository;
     constructor(repository: UserRepository) {
         this.repository = repository;
+    }
+
+    async ResponseWithError(event: APIGatewayProxyEventV2) {
+        return ErrorResponse(404, "requested method is not supported!");
     }
 
     async CreateUser(event: APIGatewayProxyEventV2) {
@@ -79,6 +84,19 @@ export class UserService {
         const input = plainToClass(VerificationDto, event.body);
         const error = await AppValidationError(input);
         if (error) return ErrorResponse(404, error);
+        const { verification_code, expiry } = await this.repository.findAccount(payload.email);
+        //find the user account
+        if (verification_code === parseInt(input.code)) {
+            //check expiry
+            const currentTime = new Date();
+            const diff = TimeDifference(expiry, currentTime.toISOString(), 'm')
+            //update on DB
+            if (diff > 0) {
+                console.log("verified successfully")
+            } else {
+                return ErrorResponse(403, "Verification code is expired");
+            }
+        }
         return SuccessResponse({ message: 'response from verify user' })
     }
 

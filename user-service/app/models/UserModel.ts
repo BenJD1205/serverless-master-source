@@ -7,5 +7,7 @@ export interface UserModel {
     userType: 'BUYER' | 'SELLER';
     first_name: string;
     last_name: string;
-    profile_pic: string;
+    profile_pic?: string;
+    verification_code?: number;
+    expiry?: any;
 }

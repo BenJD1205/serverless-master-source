@@ -17,9 +17,9 @@ export class UserRepository extends DBOperation {
         last_name = "",
         profile_pic = "",
     }: UserModel) {
-        const values = [phone, email, password, salt, userType, , first_name, last_name, profile_pic];
+        const values = [phone, email, password, salt, userType, first_name, last_name, profile_pic];
         const queryString =
-            "INSERT INTO users(phone, email, password, salt, user_type,first_name,last_name, profile_pic) VALUES($1,$2,$3,$4,$5,$6,$7,$8)";
+            "INSERT INTO users(phone, email, password, salt, user_type,first_name,last_name, profile_pic) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *";
         const result = await this.executeQuery(queryString, values);
         if (result.rowCount > 0) {
             return result.rows[0] as UserModel;
