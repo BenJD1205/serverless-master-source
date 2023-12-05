@@ -1,0 +1,81 @@
+org: benjd1205
+app: user-service
+service: user-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  versionFunctions: false
+  stage: "dev"
+  region: ap-southeast-2
+  httpApi:
+    cors: true
+
+functions:
+  signup:
+    handler: app/handler.Signup
+    events:
+      - httpApi:
+          path: /signup
+          method: post
+
+  login:
+    handler: app/handler.Login
+    events:
+      - httpApi:
+          path: /login
+          method: post
+
+  verify:
+    handler: app/handler.Verify
+    events:
+      - httpApi:
+          path: /verify
+          method: get
+      - httpApi:
+          path: /verify
+          method: post
+
+  profile:
+    handler: app/handler.Profile
+    events:
+      - httpApi:
+          path: /user
+          method: post
+      - httpApi:
+          path: /user
+          method: put
+      - httpApi:
+          path: /user
+          method: get
+
+  cart:
+    handler: app/handler.Cart
+    events:
+      - httpApi:
+          path: /cart
+          method: post
+      - httpApi:
+          path: /cart
+          method: put
+      - httpApi:
+          path: /cart
+          method: get
+
+  payment:
+    handler: app/handler.Payment
+    events:
+      - httpApi:
+          path: /payment
+          method: post
+      - httpApi:
+          path: /payment
+          method: patch
+      - httpApi:
+          path: /payment
+          method: get
+
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
