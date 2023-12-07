@@ -4,6 +4,7 @@ import { plainToClass } from 'class-transformer';
 import { SignupDto } from '../models/dto/SignupDto';
 import { LoginDto } from '../models/dto/LoginDto';
 import { VerificationDto } from '../models/dto/UpdateDto';
+import { ProfileDto } from '../models/dto/AddressDto';
 import { AppValidationError } from '../utility/error';
 import { SuccessResponse, ErrorResponse } from '../utility/response';
 import { GenSalt, GetHashedPassword, GetToken, ValidatePassword, VerifyToken } from '../utility/password';
@@ -35,9 +36,6 @@ export class UserService {
                 phone: input.phone,
                 userType: 'BUYER',
                 salt: salt,
-                first_name: input.first_name,
-                last_name: input.last_name,
-                profile_pic: input.profile_pic,
             })
             return SuccessResponse(data);
         }
@@ -92,7 +90,7 @@ export class UserService {
             const diff = TimeDifference(expiry, currentTime.toISOString(), 'm')
             //update on DB
             if (diff > 0) {
-                console.log("verified successfully")
+                await this.repository.updateVerifyUser(payload.user_id)
             } else {
                 return ErrorResponse(403, "Verification code is expired");
             }
@@ -102,6 +100,13 @@ export class UserService {
 
     //User Profile
     async CreateProfile(event: APIGatewayProxyEventV2) {
+        const token = event.headers.authorization;
+        const payload = await VerifyToken(token);
+        if (!payload) return ErrorResponse(403, "authorization failed!")
+        const input = plainToClass(ProfileDto, event.body);
+        const error = await AppValidationError(input);
+        if (error) return ErrorResponse(404, error);
+        const result = await this.repository.createProfile(payload.user_id, input);
         return SuccessResponse({ message: 'response from Create user profile' })
     }
 

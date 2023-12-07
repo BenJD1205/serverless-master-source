@@ -1,7 +1,8 @@
 import twilio from "twilio"
 
 const accountSid = "ACacb326aec0680e94b60ee4e3b40fdc42";
-const authToken = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+const authToken = "55a7a4bad4b96aba2fc81bfd0d8a94b7";
+
 const client = require('twilio')(accountSid, authToken);
 
 export const GenerateAccessCode = () => {

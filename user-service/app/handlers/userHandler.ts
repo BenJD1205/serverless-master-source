@@ -12,6 +12,7 @@ export const Signup = middy((event: APIGatewayProxyEventV2) => {
 }).use(bodyParser());
 
 export const Login = middy((event: APIGatewayProxyEventV2) => {
+    console.log(event);
     return service.UserLogin(event);
 }).use(bodyParser());
 

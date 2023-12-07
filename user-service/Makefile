@@ -10,6 +10,9 @@ migrate:
 migrate-down:
 	db-migrate-down
 
+create_migration:
+	db-migrate create ${n} --sql-file
+
 server:
 	yarn run dev
 
