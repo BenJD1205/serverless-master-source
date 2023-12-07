@@ -1,6 +1,8 @@
 import { Length } from 'class-validator';
 
 export class AddressDto {
+    id: number;
+
     @Length(3, 32)
     addressLine1: string;
     addressLine2: string;

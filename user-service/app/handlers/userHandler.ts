@@ -12,7 +12,6 @@ export const Signup = middy((event: APIGatewayProxyEventV2) => {
 }).use(bodyParser());
 
 export const Login = middy((event: APIGatewayProxyEventV2) => {
-    console.log(event);
     return service.UserLogin(event);
 }).use(bodyParser());
 
@@ -27,7 +26,7 @@ export const Verify = middy((event: APIGatewayProxyEventV2) => {
     }
 }).use(bodyParser());
 
-export const Profile = async (event: APIGatewayProxyEventV2) => {
+export const Profile = middy((event: APIGatewayProxyEventV2) => {
     const httpMethod = event.requestContext.http.method.toLowerCase();
     if (httpMethod === "post") {
         return service.CreateProfile(event);
@@ -38,7 +37,7 @@ export const Profile = async (event: APIGatewayProxyEventV2) => {
     } else {
         return service.ResponseWithError(event);
     }
-};
+}).use(bodyParser());
 
 export const Cart = middy((event: APIGatewayProxyEventV2) => {
     const httpMethod = event.requestContext.http.method.toLowerCase();
@@ -53,7 +52,7 @@ export const Cart = middy((event: APIGatewayProxyEventV2) => {
     }
 }).use(bodyParser())
 
-export const Payment = async (event: APIGatewayProxyEventV2) => {
+export const Payment = middy((event: APIGatewayProxyEventV2) => {
     const httpMethod = event.requestContext.http.method.toLowerCase();
     if (httpMethod === 'post') {
         return service.CreatePaymentMethod(event);
@@ -64,4 +63,4 @@ export const Payment = async (event: APIGatewayProxyEventV2) => {
     } else {
         return ErrorResponse(404, 'requested method is not supported')
     }
-}
+}).use(bodyParser())
